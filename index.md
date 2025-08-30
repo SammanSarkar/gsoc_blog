@@ -1,4 +1,4 @@
-# Google Summer of Code 2024: AI-Powered Editorial Generation for omegaUp
+# Google Summer of Code 2025: AI Editorial Generator for omegaUp
 
 ## About Me
 
