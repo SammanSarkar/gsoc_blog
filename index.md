@@ -38,7 +38,10 @@ The system provides a simple API that can be called for any problem on omegaUp. 
 6. **Multi-language Translation**: Based on verification results, editorial is translated to Spanish and Portuguese with appropriate disclaimers
 
 ### Workflow Diagram
-<img width="2042" height="741" alt="diagram-export-30-08-2025-20_24_28" src="https://github.com/user-attachments/assets/e9000034-4bbf-4783-af9a-54030a7ad32c" />
+<img src="https://github.com/user-attachments/assets/e9000034-4bbf-4783-af9a-54030a7ad32c" 
+     alt="diagram" 
+     style="max-width:100%; height:auto;">
+
 
 
 ## Development Journey
