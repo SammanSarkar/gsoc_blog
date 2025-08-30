@@ -2,7 +2,7 @@
 
 ## About Me
 
-I'm a passionate competitive programmer with expert ratings on Codeforces and 5-star on CodeChef. My love for competitive programming and teaching naturally aligns with omegaUp's mission of coding education. This was my first Google Summer of Code project, though I've contributed to open source projects before.
+I am a passionate competitive programmer, currently an Expert on Codeforces and 5★ on CodeChef. My love for competitive programming and teaching naturally aligns with omegaUp's mission of coding education. This was my first Google Summer of Code project, though I've contributed to open source projects before.
 
 Previously, I worked as a Software Engineer Intern at Microsoft, where I gained valuable experience with generative AI, LLMs, and AI agents. I recently joined Microsoft full-time, where I continue to apply the knowledge gained from this project in my daily work with AI systems.
 
@@ -27,47 +27,19 @@ The primary objective was to develop an AI-powered system that could automatical
 
 ## Technical Implementation
 
-### System Architecture
+The system provides a simple API that can be called for any problem on omegaUp. Here's exactly what happens when a user requests an editorial:
 
-The AI Editorial Worker system follows a microservice architecture with several key components:
+### Worker Flow
+1. **Job Polling**: Python worker continuously polls Redis queue for new editorial generation jobs
+2. **Authentication Setup**: Worker initializes API client using user's auth token and validates credentials
+3. **AC Solution Discovery**: System searches through problem submissions to find an existing Accepted (AC) solution for reference
+4. **3-Prompt AI Generation**: AI generates editorial using problem statement and AC solution, then creates its own C++ solution
+5. **Solution Verification**: Generated C++ code is automatically submitted to omegaUp judge system and verdict is captured (AC/WA/TLE/etc.)
+6. **Multi-language Translation**: Based on verification results, editorial is translated to Spanish and Portuguese with appropriate disclaimers
 
-**Frontend Integration**: Users can request AI-generated editorials directly from problem pages. The system provides real-time status updates and seamless content delivery.
+### Workflow Diagram
+<img width="2042" height="741" alt="diagram-export-30-08-2025-20_24_28" src="https://github.com/user-attachments/assets/e9000034-4bbf-4783-af9a-54030a7ad32c" />
 
-**API Controller**: A robust PHP controller manages the entire job lifecycle, including user authentication, rate limiting (250 jobs per hour per user), and job queuing. It enforces a 5-minute cooldown between requests for the same problem to prevent system abuse.
-
-**Database Layer**: A dedicated table tracks all editorial generation jobs with support for multiple languages, comprehensive status management, and detailed error logging. Each job receives a unique UUID for distributed system compatibility.
-
-**Redis Queue System**: Asynchronous job processing ensures the user interface remains responsive. The system supports priority queues, separating interactive user requests from batch processing jobs.
-
-**Python Worker Engine**: The core processing engine handles job execution with horizontal scaling support. Multiple workers can operate simultaneously, each with unique identifiers for monitoring and debugging.
-
-### AI Generation Pipeline
-
-The editorial generation process uses a sophisticated 3-prompt system:
-
-**Primary Generation**: The AI analyzes the problem statement and reference solutions to create a comprehensive editorial including problem analysis, key insights, solution approach, and a working implementation.
-
-**Verification and Enhancement**: The generated solution undergoes automated testing against the problem's judge system. The editorial is then enhanced based on verification results to ensure accuracy and completeness.
-
-**Multi-language Translation**: The English editorial is professionally translated to Spanish and Portuguese while preserving technical accuracy, code examples, and mathematical notation.
-
-### Quality Assurance
-
-The system implements multiple quality control mechanisms:
-
-- **Solution Verification**: All generated solutions are automatically tested against problem test cases
-- **Content Validation**: Generated editorials undergo format checking and content validation
-- **Human Review Workflow**: Approved editorials can be reviewed and approved by problem authors or moderators
-- **Error Recovery**: Comprehensive error handling with retry logic and graceful degradation
-
-### Scalability and Performance
-
-The system was designed for production-scale deployment:
-
-- **Horizontal Scaling**: Multiple worker instances can operate simultaneously
-- **Rate Limiting**: User-level and system-level rate limiting prevents abuse
-- **Connection Pooling**: Efficient database and Redis connection management
-- **Resource Optimization**: Memory-efficient content processing and API rate limiting compliance
 
 ## Development Journey
 
@@ -75,19 +47,19 @@ The system was designed for production-scale deployment:
 
 | Component | Description | PR Links |
 |-----------|-------------|----------|
-| **Prototype Development** | Initial system prototype and proof of concept | [#8337](https://github.com/omegaup/omegaup/pull/8337) |
-| **Database Design** | Job tracking schema with rate limiting support | [#8346](https://github.com/omegaup/omegaup/pull/8346) |
-| **Data Access Layer** | CRUD operations and business logic methods | [#8347](https://github.com/omegaup/omegaup/pull/8347) |
-| **API Controller** | REST endpoints for generation, status, and review | [#8350](https://github.com/omegaup/omegaup/pull/8350) |
-| **Unit Testing** | Comprehensive test coverage for API endpoints | [#8352](https://github.com/omegaup/omegaup/pull/8352) |
-| **Worker Foundation** | Core worker with Redis polling and job management | [#8355](https://github.com/omegaup/omegaup/pull/8355) |
-| **Configuration Management** | Config manager and Redis client components | [#8358](https://github.com/omegaup/omegaup/pull/8358), [#8361](https://github.com/omegaup/omegaup/pull/8361) |
-| **Solution Handling** | AC solution discovery and verification system | [#8364](https://github.com/omegaup/omegaup/pull/8364) |
-| **Editorial Generator** | Core AI integration and content generation | [#8368](https://github.com/omegaup/omegaup/pull/8368) |
-| **Website Integration** | Editorial publishing and content management | [#8369](https://github.com/omegaup/omegaup/pull/8369) |
-| **Authentication System** | User session integration and security | [#8373](https://github.com/omegaup/omegaup/pull/8373) |
-| **Production Deployment** | Multiple PRs for production readiness and fixes | [#8384](https://github.com/omegaup/omegaup/pull/8384), [#8391](https://github.com/omegaup/omegaup/pull/8391), [#8396](https://github.com/omegaup/omegaup/pull/8396), [#8399](https://github.com/omegaup/omegaup/pull/8399), [#8401](https://github.com/omegaup/omegaup/pull/8401), [#8402](https://github.com/omegaup/omegaup/pull/8402), [#8403](https://github.com/omegaup/omegaup/pull/8403), [#8405](https://github.com/omegaup/omegaup/pull/8405), [#8407](https://github.com/omegaup/omegaup/pull/8407) |
-| **Infrastructure Setup** | Kubernetes deployment and production configuration | [omegaup/prod#22](https://github.com/omegaup/prod/pull/22), [#24](https://github.com/omegaup/prod/pull/24), [#25](https://github.com/omegaup/prod/pull/25), [#26](https://github.com/omegaup/prod/pull/26), [#27](https://github.com/omegaup/prod/pull/27) |
+| **Prototype Development** | Initial system prototype and proof of concept | [https://github.com/omegaup/omegaup/pull/8337](https://github.com/omegaup/omegaup/pull/8337) |
+| **Database Design** | Job tracking schema with rate limiting support | [https://github.com/omegaup/omegaup/pull/8346](https://github.com/omegaup/omegaup/pull/8346) |
+| **Data Access Layer** | CRUD operations and business logic methods | [https://github.com/omegaup/omegaup/pull/8347](https://github.com/omegaup/omegaup/pull/8347) |
+| **API Controller** | REST endpoints for generation, status, and review | [https://github.com/omegaup/omegaup/pull/8350](https://github.com/omegaup/omegaup/pull/8350) |
+| **Unit Testing** | Comprehensive test coverage for API endpoints | [https://github.com/omegaup/omegaup/pull/8352](https://github.com/omegaup/omegaup/pull/8352) |
+| **Worker Foundation** | Core worker with Redis polling and job management | [https://github.com/omegaup/omegaup/pull/8355](https://github.com/omegaup/omegaup/pull/8355) |
+| **Configuration Management** | Config manager and Redis client components | [https://github.com/omegaup/omegaup/pull/8358](https://github.com/omegaup/omegaup/pull/8358), [https://github.com/omegaup/omegaup/pull/8361](https://github.com/omegaup/omegaup/pull/8361) |
+| **Solution Handling** | AC solution discovery and verification system | [https://github.com/omegaup/omegaup/pull/8364](https://github.com/omegaup/omegaup/pull/8364) |
+| **Editorial Generator** | Core AI integration and content generation | [https://github.com/omegaup/omegaup/pull/8368](https://github.com/omegaup/omegaup/pull/8368) |
+| **Website Integration** | Editorial publishing and content management | [https://github.com/omegaup/omegaup/pull/8369](https://github.com/omegaup/omegaup/pull/8369) |
+| **Authentication System** | User session integration and security | [https://github.com/omegaup/omegaup/pull/8373](https://github.com/omegaup/omegaup/pull/8373) |
+| **Production Deployment** | Multiple PRs for production readiness and fixes | [https://github.com/omegaup/omegaup/pull/8384](https://github.com/omegaup/omegaup/pull/8384), [https://github.com/omegaup/omegaup/pull/8391](https://github.com/omegaup/omegaup/pull/8391), [https://github.com/omegaup/omegaup/pull/8396](https://github.com/omegaup/omegaup/pull/8396), [https://github.com/omegaup/omegaup/pull/8399](https://github.com/omegaup/omegaup/pull/8399), [https://github.com/omegaup/omegaup/pull/8401](https://github.com/omegaup/omegaup/pull/8401), [https://github.com/omegaup/omegaup/pull/8402](https://github.com/omegaup/omegaup/pull/8402), [https://github.com/omegaup/omegaup/pull/8403](https://github.com/omegaup/omegaup/pull/8403), [https://github.com/omegaup/omegaup/pull/8405](https://github.com/omegaup/omegaup/pull/8405), [https://github.com/omegaup/omegaup/pull/8407](https://github.com/omegaup/omegaup/pull/8407) |
+| **Infrastructure Setup** | Kubernetes deployment and production configuration | [https://github.com/omegaup/prod/pull/22](https://github.com/omegaup/prod/pull/22), [https://github.com/omegaup/prod/pull/24](https://github.com/omegaup/prod/pull/24), [https://github.com/omegaup/prod/pull/25](https://github.com/omegaup/prod/pull/25), [https://github.com/omegaup/prod/pull/26](https://github.com/omegaup/prod/pull/26), [https://github.com/omegaup/prod/pull/27](https://github.com/omegaup/prod/pull/27) |
 
 ## User Workflow
 
@@ -102,16 +74,16 @@ The entire process typically completes within 2-3 minutes, making it practical f
 
 ## Impact and Future Work
 
-This project represents a significant step toward democratizing high-quality competitive programming education. By automating editorial generation, the system can potentially provide comprehensive learning materials for omegaUp's entire problem library.
+This project helps improve editorial coverage on omegaUp significantly. Currently, many problems lack editorials due to the time required to write them manually. With this automated system, we could potentially cover 70-80% of problems that don't have editorials, making the platform more helpful for learners.
 
-The modular architecture allows for future enhancements including improved AI models, additional language support, and enhanced quality validation mechanisms. The system's foundation also enables integration with other educational features within the omegaUp platform.
+The backend system is fully functional and ready for production. The next step would be integrating it with the frontend interface to make it accessible to users. The system can also be improved with better AI models. It also provides a foundation for other automated content generation features on omegaUp.
 
 ## Acknowledgments
 
-I want to thank my mentors and the omegaUp community for their guidance throughout this project. Special recognition goes to the omegaUp team for providing a robust platform foundation that made this ambitious project possible.
+Thanks to my mentors [Hugo](https://github.com/heduenas) and [Juan](https://github.com/pabo99) for their guidance throughout this project. The omegaUp team provided great support and a solid platform to build on.
 
-The knowledge gained from implementing this AI-powered system continues to be valuable in my professional work at Microsoft, where I apply similar techniques in large-scale AI applications.
+I look forward to continuing my contributions to omegaUp and further developing this AI editorial system.
 
 ---
 
-*This project was completed as part of Google Summer of Code 2024 with omegaUp. The complete technical documentation and implementation details are available in the project repository.*
+*This project was completed as part of Google Summer of Code 2025 with omegaUp.*
